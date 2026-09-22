@@ -1,0 +1,365 @@
+/* ============================================================
+   Employee Attendance & Salary Processing System
+   Custom Stylesheet
+   ============================================================ */
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --navy:          #0f1f3d;
+  --navy-dark:     #0a1628;
+  --navy-light:    #1a3460;
+  --blue-accent:   #4361ee;
+  --blue-light:    #3a86ff;
+  --teal:          #06d6a0;
+  --green:         #2dc653;
+  --orange:        #f8961e;
+  --red:           #f94144;
+  --bg-page:       #f0f2f7;
+  --bg-card:       #ffffff;
+  --text-primary:  #1a1f36;
+  --text-muted:    #6b7280;
+  --border-color:  #e5e7eb;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:     0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:     0 10px 15px rgba(0,0,0,.07), 0 4px 6px rgba(0,0,0,.05);
+  --radius:        0.5rem;
+  --radius-lg:     0.75rem;
+  --navbar-height: 60px;
+  --transition:    0.2s ease;
+}
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+a { color: var(--blue-accent); text-decoration: none; }
+a:hover { color: var(--blue-light); }
+
+/* ── Navbar ────────────────────────────────────────────────── */
+.bg-navy {
+  background-color: var(--navy) !important;
+}
+
+.navbar {
+  height: var(--navbar-height);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.navbar-brand {
+  font-size: 1rem;
+  letter-spacing: .02em;
+}
+
+.navbar .nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+  color: rgba(255,255,255,.8) !important;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  background: rgba(255,255,255,.12);
+  color: #fff !important;
+}
+
+.btn-accent {
+  background-color: var(--blue-accent);
+  border-color: var(--blue-accent);
+  color: #fff;
+}
+.btn-accent:hover {
+  background-color: var(--blue-light);
+  border-color: var(--blue-light);
+  color: #fff;
+}
+
+/* ── Page Wrapper ──────────────────────────────────────────── */
+.page-wrapper {
+  padding-top: calc(var(--navbar-height) + 1rem);
+  min-height: calc(100vh - 52px); /* 52px = footer */
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.footer-bar {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+}
+
+/* ── Page Titles ───────────────────────────────────────────── */
+.page-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.card-header {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+  padding: .75rem 1.25rem;
+  font-size: .875rem;
+}
+
+/* ── Stat Cards (Dashboard) ────────────────────────────────── */
+.stat-card {
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-top: 2px;
+}
+
+/* Five equal columns on xl screens */
+@media (min-width: 1200px) {
+  .col-xl-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
+
+/* Left border accent per card type */
+.stat-card-blue   { border-left: 4px solid var(--blue-accent) !important; }
+.stat-card-teal   { border-left: 4px solid var(--teal)        !important; }
+.stat-card-green  { border-left: 4px solid var(--green)       !important; }
+.stat-card-orange { border-left: 4px solid var(--orange)      !important; }
+.stat-card-red    { border-left: 4px solid var(--red)         !important; }
+
+.text-teal { color: var(--teal) !important; }
+.bg-teal   { background-color: var(--teal) !important; }
+
+/* ── Stat Pills (Report pages) ─────────────────────────────── */
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: .35rem .85rem;
+  border-radius: 2rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.stat-pill-blue  { background: #eff3ff; color: var(--blue-accent); border-color: #c7d2fe; }
+.stat-pill-green { background: #f0fdf4; color: #16a34a;            border-color: #bbf7d0; }
+.stat-pill-red   { background: #fff1f2; color: var(--red);         border-color: #fecdd3; }
+
+/* ── Badges ────────────────────────────────────────────────── */
+.status-good {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  font-weight: 600;
+  font-size: .75rem;
+}
+.status-below {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  font-weight: 600;
+  font-size: .75rem;
+}
+
+/* ── Tables ────────────────────────────────────────────────── */
+.table {
+  font-size: .875rem;
+}
+.table th {
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.table td { vertical-align: middle; }
+.table-danger-subtle { background-color: #fff5f5 !important; }
+
+/* ── Small action buttons ─────────────────────────────────── */
+.btn-xs {
+  padding: .2rem .45rem;
+  font-size: .75rem;
+  line-height: 1.4;
+  border-radius: .3rem;
+}
+
+/* ── Forms ─────────────────────────────────────────────────── */
+.required-label::after {
+  content: " *";
+  color: var(--red);
+}
+
+.section-label {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  font-weight: 700;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: .4rem;
+}
+
+/* ── Live Preview Panel ────────────────────────────────────── */
+.preview-section {
+  padding: .75rem;
+  background: var(--bg-page);
+  border-radius: var(--radius);
+}
+
+/* ── Profile / Detail Page ─────────────────────────────────── */
+.profile-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: #fff;
+  border: none;
+}
+.profile-banner .text-muted { color: rgba(255,255,255,.65) !important; }
+.profile-banner h4          { color: #fff; }
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  border: 3px solid rgba(255,255,255,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.detail-card { border-top: 3px solid transparent; }
+.detail-card-header-blue  { background: #eff6ff; color: var(--navy); border-bottom: 1px solid #bfdbfe; }
+.detail-card-header-teal  { background: #f0fdfa; color: #065f46;     border-bottom: 1px solid #a7f3d0; }
+.detail-card-header-green { background: #f0fdf4; color: #14532d;     border-bottom: 1px solid #bbf7d0; }
+
+dl.row dt, dl.row dd { margin-bottom: .5rem; }
+
+/* ── Summary Report Stat Boxes ─────────────────────────────── */
+.summary-stat-box {
+  padding: .75rem 1rem;
+  background: var(--bg-page);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+.summary-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.summary-stat-label {
+  font-size: .75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ── Progress bars ─────────────────────────────────────────── */
+.progress { background-color: #e9ecef; border-radius: 4px; }
+.progress-bar { transition: width 0.6s ease; }
+
+/* ── Alerts ────────────────────────────────────────────────── */
+.alert { border-radius: var(--radius); border-left-width: 4px; }
+.alert-success { border-left-color: var(--green); }
+.alert-danger  { border-left-color: var(--red); }
+.alert-warning { border-left-color: var(--orange); }
+.alert-info    { border-left-color: var(--blue-light); }
+
+/* ── Dropdown menu ─────────────────────────────────────────── */
+.dropdown-menu {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  font-size: .875rem;
+}
+.dropdown-item {
+  padding: .5rem 1rem;
+  border-radius: calc(var(--radius-lg) - 2px);
+  transition: background var(--transition);
+}
+.dropdown-item:hover { background: #f1f5f9; }
+
+/* ── Utility ───────────────────────────────────────────────── */
+.text-nowrap { white-space: nowrap; }
+code { color: var(--blue-accent); font-size: .85em; }
+
+/* Bootstrap subtle color helpers (used in templates) */
+.bg-secondary-subtle { background-color: #f1f5f9 !important; }
+.bg-primary-subtle   { background-color: #eff3ff !important; }
+.bg-danger-subtle    { background-color: #fff1f2 !important; }
+
+/* ── Print Styles ──────────────────────────────────────────── */
+@media print {
+  .navbar,
+  .footer-bar,
+  .btn,
+  .no-print { display: none !important; }
+
+  .page-wrapper { padding-top: 0 !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc !important; }
+  body { background: #fff; }
+}
+
+/* ── Responsive Tweaks ─────────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .page-title { font-size: 1.1rem; }
+  .stat-value  { font-size: 1.15rem; }
+  .table { font-size: .8rem; }
+  .btn-xs { font-size: .7rem; }
+}
+
+@media (max-width: 575.98px) {
+  .stat-card .card-body { flex-direction: column; text-align: center; }
+  .profile-avatar { width: 56px; height: 56px; font-size: 1.5rem; }
+}
+
+/* ── Scrollbar (WebKit) ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.card { animation: fadeInUp .25s ease both; }

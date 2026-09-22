@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ employee.name }} – Employee Attendance System{% endblock %}
+
+{% block content %}
+<!-- ── Page header ──────────────────────────────────────────────────────── -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h4 class="page-title mb-0"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Employee</h4>
+    <small class="text-muted">Updating record for <strong>{{ employee.name }}</strong> ({{ employee.employee_id }})</small>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('employee.employee_detail', emp_pk=employee.id) }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Back to Profile
+    </a>
+    <a href="{{ url_for('employee.employees') }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-people me-1"></i>All Employees
+    </a>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Edit Form ────────────────────────────────────────────────────────── -->
+  <div class="col-12 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-warning text-dark">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-pencil me-2"></i>Edit Employee Details</h6>
+      </div>
+      <div class="card-body">
+        <form method="POST"
+              action="{{ url_for('employee.edit_employee', emp_pk=employee.id) }}"
+              id="editEmployeeForm" novalidate>
+
+          <!-- ── Employee ID (read-only) ─────────────────────────────────── -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Employee ID</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+              <input type="text" class="form-control bg-light" value="{{ employee.employee_id }}" disabled />
+            </div>
+            <div class="form-text text-warning">
+              <i class="bi bi-lock me-1"></i>Employee ID cannot be changed after creation.
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <!-- ── Identification ─────────────────────────────────────────── -->
+          <h6 class="section-label mb-3"><i class="bi bi-person-badge me-2"></i>Identification</h6>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-6">
+              <label for="name" class="form-label fw-semibold required-label">Employee Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control" id="name" name="name"
+                       value="{{ form_data.get('name', employee.name) }}"
+                       maxlength="100" required />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="department" class="form-label fw-semibold required-label">Department</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                <input type="text" class="form-control" id="department" name="department"
+                       value="{{ form_data.get('department', employee.department) }}"
+                       list="deptSuggestions"
+                       maxlength="100" required />
+                <datalist id="deptSuggestions">
+                  <option value="IT">
+                  <option value="HR">
+                  <option value="Finance">
+                  <option value="Marketing">
+                  <option value="Operations">
+                  <option value="Sales">
+                </datalist>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <!-- ── Attendance ─────────────────────────────────────────────── -->
+          <h6 class="section-label mb-3"><i class="bi bi-calendar-check me-2"></i>Attendance</h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6">
+              <label for="total_working_days" class="form-label fw-semibold required-label">Total Working Days</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                <input type="number" class="form-control calc-trigger" id="total_working_days"
+                       name="total_working_days"
+                       value="{{ form_data.get('total_working_days', employee.total_working_days) }}"
+                       min="1" max="365" required />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="days_present" class="form-label fw-semibold required-label">Days Present</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-check2-square"></i></span>
+                <input type="number" class="form-control calc-trigger" id="days_present"
+                       name="days_present"
+                       value="{{ form_data.get('days_present', employee.days_present) }}"
+                       min="0" required />
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <!-- ── Salary ─────────────────────────────────────────────────── -->
+          <h6 class="section-label mb-3"><i class="bi bi-cash-stack me-2"></i>Salary &amp; Overtime</h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6">
+              <label for="basic_salary" class="form-label fw-semibold required-label">Basic Salary (₹)</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" class="form-control calc-trigger" id="basic_salary"
+                       name="basic_salary"
+                       value="{{ form_data.get('basic_salary', employee.basic_salary) }}"
+                       min="0" step="0.01" required />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="overtime_hours" class="form-label fw-semibold">Overtime Hours</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-clock-history"></i></span>
+                <input type="number" class="form-control calc-trigger" id="overtime_hours"
+                       name="overtime_hours"
+                       value="{{ form_data.get('overtime_hours', employee.overtime_hours) }}"
+                       min="0" step="0.5" />
+              </div>
+              <div class="form-text">Rate: ₹{{ config.OVERTIME_RATE }}/hr</div>
+            </div>
+          </div>
+
+          <!-- ── Submit ─────────────────────────────────────────────────── -->
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-warning px-4">
+              <i class="bi bi-save me-1"></i>Save Changes
+            </button>
+            <a href="{{ url_for('employee.employee_detail', emp_pk=employee.id) }}"
+               class="btn btn-outline-secondary">
+              <i class="bi bi-x-lg me-1"></i>Cancel
+            </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div><!-- /form col -->
+
+  <!-- ── Live Preview ─────────────────────────────────────────────────────── -->
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm sticky-top" style="top:80px;">
+      <div class="card-header bg-success text-white">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-calculator me-2"></i>Live Calculation Preview</h6>
+      </div>
+      <div class="card-body">
+
+        <div class="preview-section mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small fw-semibold text-muted"><i class="bi bi-calendar-check me-1"></i>Attendance</span>
+            <span class="fs-5 fw-bold" id="prev-attendance">—</span>
+          </div>
+          <div class="progress" style="height:8px;">
+            <div class="progress-bar" id="prev-att-bar" style="width:0%"></div>
+          </div>
+          <div class="mt-1">
+            <span class="badge" id="prev-status-badge">Not calculated</span>
+          </div>
+        </div>
+
+        <hr class="my-2" />
+
+        <div class="preview-section">
+          <p class="small fw-semibold text-muted mb-2"><i class="bi bi-cash-stack me-1"></i>Salary Breakdown</p>
+          <table class="table table-sm table-borderless mb-0">
+            <tbody>
+              <tr>
+                <td class="text-muted ps-0">Basic Salary</td>
+                <td class="text-end fw-medium" id="prev-basic">₹0.00</td>
+              </tr>
+              <tr>
+                <td class="text-muted ps-0">Overtime (<span id="prev-ot-hours">0</span> hrs × ₹{{ config.OVERTIME_RATE }})</td>
+                <td class="text-end fw-medium text-warning" id="prev-ot-pay">₹0.00</td>
+              </tr>
+              <tr class="border-top">
+                <td class="fw-bold ps-0">Final Salary</td>
+                <td class="text-end fw-bold text-success fs-6" id="prev-final">₹0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current saved values -->
+    <div class="card shadow-sm mt-3">
+      <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0 fw-semibold small">
+          <i class="bi bi-database me-2 text-secondary"></i>Currently Saved Values
+        </h6>
+      </div>
+      <div class="card-body small">
+        <div class="row g-2">
+          <div class="col-6">
+            <span class="text-muted">Attendance:</span>
+            <strong class="{% if employee.attendance_percentage >= 75 %}text-success{% else %}text-danger{% endif %} ms-1">
+              {{ employee.attendance_percentage }}%
+            </strong>
+          </div>
+          <div class="col-6">
+            <span class="text-muted">Status:</span>
+            {% if employee.attendance_status == 'Good Attendance' %}
+              <span class="badge status-good ms-1">Good</span>
+            {% else %}
+              <span class="badge status-below ms-1">Below</span>
+            {% endif %}
+          </div>
+          <div class="col-6">
+            <span class="text-muted">OT Pay:</span>
+            <strong class="ms-1">{{ format_inr(employee.overtime_pay) }}</strong>
+          </div>
+          <div class="col-6">
+            <span class="text-muted">Final:</span>
+            <strong class="text-success ms-1">{{ format_inr(employee.final_salary) }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /preview col -->
+
+</div><!-- /row -->
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const OVERTIME_RATE = {{ config.OVERTIME_RATE }};
+const THRESHOLD     = {{ config.ATTENDANCE_THRESHOLD }};
+
+function formatINR(amount) {
+  if (isNaN(amount)) return '₹0.00';
+  const neg = amount < 0;
+  amount = Math.abs(amount);
+  const paise = amount.toFixed(2).split('.')[1];
+  let intPart = Math.floor(amount).toString();
+  let result = '';
+  if (intPart.length <= 3) {
+    result = intPart;
+  } else {
+    result = intPart.slice(-3);
+    intPart = intPart.slice(0, -3);
+    while (intPart.length > 0) {
+      result = intPart.slice(-2) + ',' + result;
+      intPart = intPart.slice(0, -2);
+    }
+  }
+  return (neg ? '-' : '') + '₹' + result + '.' + paise;
+}
+
+function updatePreview() {
+  const totalDays   = parseFloat(document.getElementById('total_working_days').value) || 0;
+  const daysPresent = parseFloat(document.getElementById('days_present').value)       || 0;
+  const basicSalary = parseFloat(document.getElementById('basic_salary').value)       || 0;
+  const otHours     = parseFloat(document.getElementById('overtime_hours').value)     || 0;
+
+  const attPct  = totalDays > 0 ? Math.round((daysPresent / totalDays) * 10000) / 100 : 0;
+  const isBelow = attPct < THRESHOLD;
+  const status  = isBelow ? 'Below Threshold' : 'Good Attendance';
+  const otPay   = otHours * OVERTIME_RATE;
+  const final   = basicSalary + otPay;
+
+  document.getElementById('prev-attendance').textContent = attPct.toFixed(2) + '%';
+  document.getElementById('prev-attendance').className   = 'fs-5 fw-bold ' + (isBelow ? 'text-danger' : 'text-success');
+
+  const bar = document.getElementById('prev-att-bar');
+  bar.style.width = Math.min(attPct, 100) + '%';
+  bar.className   = 'progress-bar ' + (isBelow ? 'bg-danger' : 'bg-success');
+
+  const badge = document.getElementById('prev-status-badge');
+  badge.textContent = status;
+  badge.className   = 'badge ' + (isBelow ? 'status-below' : 'status-good');
+
+  document.getElementById('prev-ot-hours').textContent = otHours;
+  document.getElementById('prev-basic').textContent    = formatINR(basicSalary);
+  document.getElementById('prev-ot-pay').textContent   = formatINR(otPay);
+  document.getElementById('prev-final').textContent    = formatINR(final);
+}
+
+document.querySelectorAll('.calc-trigger').forEach(el => {
+  el.addEventListener('input', updatePreview);
+});
+updatePreview();
+</script>
+{% endblock %}

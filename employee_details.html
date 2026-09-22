@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.name }} – Employee Profile{% endblock %}
+
+{% block content %}
+<!-- ── Page header ──────────────────────────────────────────────────────── -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h4 class="page-title mb-0">
+      <i class="bi bi-person-circle me-2 text-primary"></i>Employee Profile
+    </h4>
+    <small class="text-muted">Detailed information for {{ employee.name }}</small>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('employee.edit_employee', emp_pk=employee.id) }}"
+       class="btn btn-warning btn-sm">
+      <i class="bi bi-pencil me-1"></i>Edit
+    </a>
+    <a href="{{ url_for('employee.employees') }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Back to Employees
+    </a>
+  </div>
+</div>
+
+<!-- ── Profile header banner ─────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4 profile-banner">
+  <div class="card-body d-flex align-items-center gap-4 flex-wrap">
+    <!-- Avatar -->
+    <div class="profile-avatar">
+      {{ employee.name[0].upper() }}
+    </div>
+    <!-- Core info -->
+    <div class="flex-fill">
+      <h4 class="mb-1 fw-bold">{{ employee.name }}</h4>
+      <div class="d-flex flex-wrap gap-3 text-muted small">
+        <span><i class="bi bi-hash me-1"></i><strong>{{ employee.employee_id }}</strong></span>
+        <span><i class="bi bi-building me-1"></i>{{ employee.department }}</span>
+        <span><i class="bi bi-calendar3 me-1"></i>Joined {{ employee.created_at.strftime('%d %b %Y') }}</span>
+      </div>
+    </div>
+    <!-- Status badge -->
+    <div class="text-end">
+      {% if employee.attendance_status == 'Good Attendance' %}
+        <span class="badge status-good fs-6 px-3 py-2">
+          <i class="bi bi-check-circle me-1"></i>Good Attendance
+        </span>
+      {% else %}
+        <span class="badge status-below fs-6 px-3 py-2">
+          <i class="bi bi-exclamation-triangle me-1"></i>Below Threshold
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- ── Info cards row ─────────────────────────────────────────────────────── -->
+<div class="row g-4 mb-4">
+
+  <!-- EMPLOYEE INFORMATION -->
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="card shadow-sm h-100 detail-card">
+      <div class="card-header detail-card-header-blue">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-person-badge me-2"></i>Employee Information
+        </h6>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-5 text-muted small">Employee ID</dt>
+          <dd class="col-7"><code class="text-primary fw-semibold">{{ employee.employee_id }}</code></dd>
+
+          <dt class="col-5 text-muted small">Full Name</dt>
+          <dd class="col-7 fw-medium">{{ employee.name }}</dd>
+
+          <dt class="col-5 text-muted small">Department</dt>
+          <dd class="col-7">
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+              {{ employee.department }}
+            </span>
+          </dd>
+
+          <dt class="col-5 text-muted small">Joined</dt>
+          <dd class="col-7 small">{{ employee.created_at.strftime('%d %b %Y') }}</dd>
+
+          <dt class="col-5 text-muted small">Last Updated</dt>
+          <dd class="col-7 small">{{ employee.updated_at.strftime('%d %b %Y') }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE INFORMATION -->
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="card shadow-sm h-100 detail-card">
+      <div class="card-header detail-card-header-teal">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-calendar-check me-2"></i>Attendance
+        </h6>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-3">
+          <dt class="col-6 text-muted small">Working Days</dt>
+          <dd class="col-6 fw-medium">{{ employee.total_working_days }}</dd>
+
+          <dt class="col-6 text-muted small">Days Present</dt>
+          <dd class="col-6 fw-medium">{{ employee.days_present }}</dd>
+
+          <dt class="col-6 text-muted small">Days Absent</dt>
+          <dd class="col-6 fw-medium text-danger">
+            {{ employee.total_working_days - employee.days_present }}
+          </dd>
+        </dl>
+
+        <!-- Attendance gauge -->
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="text-muted">Attendance</span>
+            <span class="fw-bold {% if employee.attendance_percentage >= 75 %}text-success{% else %}text-danger{% endif %}">
+              {{ employee.attendance_percentage }}%
+            </span>
+          </div>
+          <div class="progress" style="height:10px;border-radius:5px;">
+            <div class="progress-bar {% if employee.attendance_percentage >= 75 %}bg-success{% else %}bg-danger{% endif %}"
+                 style="width:{{ employee.attendance_percentage }}%; border-radius:5px;"
+                 role="progressbar"
+                 aria-valuenow="{{ employee.attendance_percentage }}"
+                 aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          {% if employee.attendance_status == 'Good Attendance' %}
+            <span class="badge status-good">
+              <i class="bi bi-check-circle me-1"></i>Good Attendance
+            </span>
+          {% else %}
+            <span class="badge status-below">
+              <i class="bi bi-exclamation-triangle me-1"></i>Below Threshold
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALARY INFORMATION -->
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="card shadow-sm h-100 detail-card">
+      <div class="card-header detail-card-header-green">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-cash-stack me-2"></i>Salary
+        </h6>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-6 text-muted small">Basic Salary</dt>
+          <dd class="col-6 fw-medium">{{ format_inr(employee.basic_salary) }}</dd>
+
+          <dt class="col-6 text-muted small">Overtime Hours</dt>
+          <dd class="col-6 fw-medium">{{ employee.overtime_hours }} hrs</dd>
+
+          <dt class="col-6 text-muted small">OT Rate</dt>
+          <dd class="col-6 fw-medium">₹{{ config.OVERTIME_RATE }}/hr</dd>
+
+          <dt class="col-6 text-muted small">Overtime Pay</dt>
+          <dd class="col-6 fw-medium text-warning">{{ format_inr(employee.overtime_pay) }}</dd>
+
+          <dt class="col-6 text-muted small border-top pt-2">Final Salary</dt>
+          <dd class="col-6 fw-bold text-success fs-6 border-top pt-2">
+            {{ format_inr(employee.final_salary) }}
+          </dd>
+        </dl>
+
+        <!-- Salary visual breakdown bar -->
+        <div class="mt-3">
+          {% if employee.final_salary > 0 %}
+          {% set basic_pct = (employee.basic_salary / employee.final_salary * 100) | round(1) %}
+          {% set ot_pct    = (employee.overtime_pay  / employee.final_salary * 100) | round(1) %}
+          <div class="d-flex justify-content-between small text-muted mb-1">
+            <span>Basic</span><span>Overtime</span>
+          </div>
+          <div class="progress" style="height:8px;">
+            <div class="progress-bar bg-primary" style="width:{{ basic_pct }}%"
+                 title="Basic: {{ format_inr(employee.basic_salary) }}"></div>
+            <div class="progress-bar bg-warning" style="width:{{ ot_pct }}%"
+                 title="OT: {{ format_inr(employee.overtime_pay) }}"></div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /info cards -->
+
+<!-- ── Action buttons ─────────────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body d-flex flex-wrap gap-2">
+    <a href="{{ url_for('employee.edit_employee', emp_pk=employee.id) }}"
+       class="btn btn-warning">
+      <i class="bi bi-pencil me-1"></i>Edit Employee
+    </a>
+    <a href="{{ url_for('report.attendance_report') }}" class="btn btn-outline-info">
+      <i class="bi bi-calendar-check me-1"></i>Attendance Report
+    </a>
+    <a href="{{ url_for('report.salary_report') }}" class="btn btn-outline-success">
+      <i class="bi bi-cash-stack me-1"></i>Salary Report
+    </a>
+    <a href="{{ url_for('employee.employees') }}" class="btn btn-outline-secondary ms-auto">
+      <i class="bi bi-people me-1"></i>All Employees
+    </a>
+
+    <!-- Delete -->
+    <button type="button" class="btn btn-outline-danger"
+            onclick="confirmDelete('{{ employee.id }}', '{{ employee.name|e }}')">
+      <i class="bi bi-trash me-1"></i>Delete Employee
+    </button>
+
+    <form id="delete-form-{{ employee.id }}"
+          action="{{ url_for('employee.delete_employee', emp_pk=employee.id) }}"
+          method="POST" class="d-none"></form>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title text-danger">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Delete
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="deleteEmpName"></strong>?</p>
+        <p class="text-danger small mb-0">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">
+          <i class="bi bi-trash me-1"></i>Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let pendingDeleteId = null;
+function confirmDelete(empId, empName) {
+  pendingDeleteId = empId;
+  document.getElementById('deleteEmpName').textContent = empName;
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+  if (pendingDeleteId) {
+    document.getElementById('delete-form-' + pendingDeleteId).submit();
+  }
+});
+</script>
+{% endblock %}

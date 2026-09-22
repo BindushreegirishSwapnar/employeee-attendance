@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block title %}Add Employee – Employee Attendance System{% endblock %}
+
+{% block content %}
+<!-- ── Page header ──────────────────────────────────────────────────────── -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h4 class="page-title mb-0"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Add New Employee</h4>
+    <small class="text-muted">Fill in the details below to register a new employee</small>
+  </div>
+  <a href="{{ url_for('employee.employees') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to Employees
+  </a>
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Form ────────────────────────────────────────────────────────────── -->
+  <div class="col-12 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-pencil-square me-2"></i>Employee Information</h6>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('employee.add_employee') }}" id="addEmployeeForm" novalidate>
+
+          <!-- ── Identification ─────────────────────────────────────────── -->
+          <h6 class="section-label mb-3">
+            <i class="bi bi-person-badge me-2"></i>Identification
+          </h6>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-6">
+              <label for="employee_id" class="form-label fw-semibold required-label">Employee ID</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                <input type="text" class="form-control" id="employee_id" name="employee_id"
+                       placeholder="e.g. E009"
+                       value="{{ form_data.get('employee_id', '') }}"
+                       maxlength="20" required />
+              </div>
+              <div class="form-text">Must be unique. Example: E001, EMP-042</div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="name" class="form-label fw-semibold required-label">Employee Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control" id="name" name="name"
+                       placeholder="Full name"
+                       value="{{ form_data.get('name', '') }}"
+                       maxlength="100" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="department" class="form-label fw-semibold required-label">Department</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-building"></i></span>
+              <input type="text" class="form-control" id="department" name="department"
+                     placeholder="e.g. IT, HR, Finance, Marketing"
+                     value="{{ form_data.get('department', '') }}"
+                     list="deptSuggestions"
+                     maxlength="100" required />
+              <datalist id="deptSuggestions">
+                <option value="IT">
+                <option value="HR">
+                <option value="Finance">
+                <option value="Marketing">
+                <option value="Operations">
+                <option value="Sales">
+              </datalist>
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <!-- ── Attendance ─────────────────────────────────────────────── -->
+          <h6 class="section-label mb-3">
+            <i class="bi bi-calendar-check me-2"></i>Attendance
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6">
+              <label for="total_working_days" class="form-label fw-semibold required-label">Total Working Days</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                <input type="number" class="form-control calc-trigger" id="total_working_days"
+                       name="total_working_days" placeholder="e.g. 26"
+                       value="{{ form_data.get('total_working_days', '') }}"
+                       min="1" max="365" required />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="days_present" class="form-label fw-semibold required-label">Days Present</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-check2-square"></i></span>
+                <input type="number" class="form-control calc-trigger" id="days_present"
+                       name="days_present" placeholder="e.g. 23"
+                       value="{{ form_data.get('days_present', '') }}"
+                       min="0" required />
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <!-- ── Salary & Overtime ──────────────────────────────────────── -->
+          <h6 class="section-label mb-3">
+            <i class="bi bi-cash-stack me-2"></i>Salary &amp; Overtime
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6">
+              <label for="basic_salary" class="form-label fw-semibold required-label">Basic Salary (₹)</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" class="form-control calc-trigger" id="basic_salary"
+                       name="basic_salary" placeholder="e.g. 30000"
+                       value="{{ form_data.get('basic_salary', '') }}"
+                       min="0" step="0.01" required />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="overtime_hours" class="form-label fw-semibold">Overtime Hours</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-clock-history"></i></span>
+                <input type="number" class="form-control calc-trigger" id="overtime_hours"
+                       name="overtime_hours" placeholder="e.g. 10"
+                       value="{{ form_data.get('overtime_hours', '0') }}"
+                       min="0" step="0.5" />
+              </div>
+              <div class="form-text">Rate: ₹{{ config.OVERTIME_RATE }}/hr</div>
+            </div>
+          </div>
+
+          <!-- ── Submit ─────────────────────────────────────────────────── -->
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-person-check-fill me-1"></i>Add Employee
+            </button>
+            <a href="{{ url_for('employee.employees') }}" class="btn btn-outline-secondary">
+              <i class="bi bi-x-lg me-1"></i>Cancel
+            </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div><!-- /form col -->
+
+  <!-- ── Live Calculation Preview ────────────────────────────────────────── -->
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm sticky-top" style="top:80px;">
+      <div class="card-header bg-success text-white">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-calculator me-2"></i>Live Calculation Preview</h6>
+      </div>
+      <div class="card-body" id="previewPanel">
+
+        <!-- Attendance -->
+        <div class="preview-section mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small fw-semibold text-muted"><i class="bi bi-calendar-check me-1"></i>Attendance</span>
+            <span class="fs-5 fw-bold" id="prev-attendance">—</span>
+          </div>
+          <div class="progress" style="height:8px;">
+            <div class="progress-bar" id="prev-att-bar" style="width:0%"></div>
+          </div>
+          <div class="mt-1">
+            <span class="badge" id="prev-status-badge">Not calculated</span>
+          </div>
+        </div>
+
+        <hr class="my-2" />
+
+        <!-- Salary breakdown -->
+        <div class="preview-section">
+          <p class="small fw-semibold text-muted mb-2"><i class="bi bi-cash-stack me-1"></i>Salary Breakdown</p>
+          <table class="table table-sm table-borderless mb-0">
+            <tbody>
+              <tr>
+                <td class="text-muted ps-0">Basic Salary</td>
+                <td class="text-end fw-medium" id="prev-basic">₹0.00</td>
+              </tr>
+              <tr>
+                <td class="text-muted ps-0">Overtime (<span id="prev-ot-hours">0</span> hrs × ₹{{ config.OVERTIME_RATE }})</td>
+                <td class="text-end fw-medium text-warning" id="prev-ot-pay">₹0.00</td>
+              </tr>
+              <tr class="border-top">
+                <td class="fw-bold ps-0">Final Salary</td>
+                <td class="text-end fw-bold text-success fs-6" id="prev-final">₹0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="alert alert-info mt-3 mb-0 py-2 small" id="previewHint">
+          <i class="bi bi-info-circle me-1"></i>
+          Enter the form values on the left to see calculations update live.
+        </div>
+      </div>
+    </div>
+
+    <!-- Formula reference card -->
+    <div class="card shadow-sm mt-3">
+      <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0 fw-semibold small"><i class="bi bi-journals me-2 text-info"></i>Calculation Reference</h6>
+      </div>
+      <div class="card-body small text-muted">
+        <p class="mb-1"><strong>Attendance %</strong> = (Days Present ÷ Working Days) × 100</p>
+        <p class="mb-1"><strong>Overtime Pay</strong> = Overtime Hours × ₹{{ config.OVERTIME_RATE }}</p>
+        <p class="mb-1"><strong>Final Salary</strong> = Basic Salary + Overtime Pay</p>
+        <p class="mb-0"><strong>Threshold</strong> = {{ config.ATTENDANCE_THRESHOLD }}% (below = flagged)</p>
+      </div>
+    </div>
+  </div><!-- /preview col -->
+
+</div><!-- /row -->
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const OVERTIME_RATE = {{ config.OVERTIME_RATE }};
+const THRESHOLD     = {{ config.ATTENDANCE_THRESHOLD }};
+
+// Format number as Indian Rupee string (client-side mirror of server helper)
+function formatINR(amount) {
+  if (isNaN(amount)) return '₹0.00';
+  const neg = amount < 0;
+  amount = Math.abs(amount);
+  const paise = amount.toFixed(2).split('.')[1];
+  let intPart = Math.floor(amount).toString();
+  let result = '';
+  if (intPart.length <= 3) {
+    result = intPart;
+  } else {
+    result = intPart.slice(-3);
+    intPart = intPart.slice(0, -3);
+    while (intPart.length > 0) {
+      result = intPart.slice(-2) + ',' + result;
+      intPart = intPart.slice(0, -2);
+    }
+  }
+  return (neg ? '-' : '') + '₹' + result + '.' + paise;
+}
+
+function updatePreview() {
+  const totalDays    = parseFloat(document.getElementById('total_working_days').value) || 0;
+  const daysPresent  = parseFloat(document.getElementById('days_present').value)       || 0;
+  const basicSalary  = parseFloat(document.getElementById('basic_salary').value)       || 0;
+  const otHours      = parseFloat(document.getElementById('overtime_hours').value)     || 0;
+
+  // Attendance
+  const attPct = totalDays > 0 ? Math.round((daysPresent / totalDays) * 10000) / 100 : 0;
+  const isBelow = attPct < THRESHOLD;
+  const status  = isBelow ? 'Below Threshold' : 'Good Attendance';
+
+  // Salary
+  const otPay   = otHours * OVERTIME_RATE;
+  const final   = basicSalary + otPay;
+
+  // Update DOM
+  document.getElementById('prev-attendance').textContent = attPct.toFixed(2) + '%';
+  document.getElementById('prev-attendance').className   = 'fs-5 fw-bold ' + (isBelow ? 'text-danger' : 'text-success');
+
+  const bar = document.getElementById('prev-att-bar');
+  bar.style.width = Math.min(attPct, 100) + '%';
+  bar.className   = 'progress-bar ' + (isBelow ? 'bg-danger' : 'bg-success');
+
+  const badge = document.getElementById('prev-status-badge');
+  badge.textContent = status;
+  badge.className   = 'badge ' + (isBelow ? 'status-below' : 'status-good');
+
+  document.getElementById('prev-ot-hours').textContent = otHours;
+  document.getElementById('prev-basic').textContent    = formatINR(basicSalary);
+  document.getElementById('prev-ot-pay').textContent   = formatINR(otPay);
+  document.getElementById('prev-final').textContent    = formatINR(final);
+
+  document.getElementById('previewHint').style.display = 'none';
+}
+
+// Attach listeners to every calc-trigger input
+document.querySelectorAll('.calc-trigger').forEach(el => {
+  el.addEventListener('input', updatePreview);
+});
+
+// Run once on load (handles back-navigation with pre-filled values)
+updatePreview();
+</script>
+{% endblock %}

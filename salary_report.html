@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Salary Report – Employee Attendance System{% endblock %}
+
+{% block content %}
+<!-- ── Page header ──────────────────────────────────────────────────────── -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h4 class="page-title mb-0"><i class="bi bi-cash-stack me-2 text-success"></i>Salary Report</h4>
+    <small class="text-muted">{{ report_data|length }} employee(s)</small>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('report.export_salary_csv') }}{% if dept_filter %}?department={{ dept_filter }}{% endif %}"
+       class="btn btn-outline-success btn-sm">
+      <i class="bi bi-download me-1"></i>Export CSV
+    </a>
+    <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-printer me-1"></i>Print
+    </button>
+  </div>
+</div>
+
+<!-- ── Department filter ─────────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body py-2">
+    <form method="GET" class="d-flex align-items-center gap-3 flex-wrap">
+      <label class="form-label mb-0 fw-semibold small">
+        <i class="bi bi-building me-1"></i>Filter by Department:
+      </label>
+      <select name="department" class="form-select form-select-sm" style="max-width:220px;"
+              onchange="this.form.submit()">
+        <option value="">All Departments</option>
+        {% for dept in departments %}
+          <option value="{{ dept }}" {% if dept_filter == dept %}selected{% endif %}>{{ dept }}</option>
+        {% endfor %}
+      </select>
+      {% if dept_filter %}
+        <a href="{{ url_for('report.salary_report') }}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-x-lg me-1"></i>Clear
+        </a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<!-- ── Totals banner ─────────────────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-4">
+    <div class="card border-primary border-opacity-25 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="text-muted small mb-1"><i class="bi bi-wallet2 me-1"></i>Total Basic Salary</div>
+        <div class="fs-5 fw-bold text-primary">{{ format_inr(totals.total_basic_salary) }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-4">
+    <div class="card border-warning border-opacity-25 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="text-muted small mb-1"><i class="bi bi-clock-history me-1"></i>Total Overtime Pay</div>
+        <div class="fs-5 fw-bold text-warning">{{ format_inr(totals.total_overtime_pay) }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-4">
+    <div class="card border-success border-opacity-50 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="text-muted small mb-1"><i class="bi bi-cash-stack me-1"></i>Total Final Salary</div>
+        <div class="fs-5 fw-bold text-success">{{ format_inr(totals.total_final_salary) }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Salary table ──────────────────────────────────────────────────────── -->
+<div class="card shadow-sm">
+  <div class="card-header bg-white border-bottom">
+    <h6 class="mb-0 fw-semibold"><i class="bi bi-table me-2 text-success"></i>Salary Breakdown – All Employees</h6>
+  </div>
+  <div class="card-body p-0">
+    {% if report_data %}
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered mb-0 align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Emp ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th class="text-end">Basic Salary</th>
+            <th class="text-center">OT Hours</th>
+            <th class="text-end">OT Pay</th>
+            <th class="text-end">Final Salary</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in report_data %}
+          <tr>
+            <td><code class="text-primary">{{ row.employee_id }}</code></td>
+            <td class="fw-medium">{{ row.name }}</td>
+            <td>
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                {{ row.department }}
+              </span>
+            </td>
+            <td class="text-end">{{ format_inr(row.basic_salary) }}</td>
+            <td class="text-center">{{ row.overtime_hours }}</td>
+            <td class="text-end {% if row.overtime_pay > 0 %}text-warning fw-semibold{% endif %}">
+              {{ format_inr(row.overtime_pay) }}
+            </td>
+            <td class="text-end fw-bold text-success">{{ format_inr(row.final_salary) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <!-- Totals row -->
+        <tfoot class="table-dark fw-bold">
+          <tr>
+            <td colspan="3" class="text-end">TOTALS</td>
+            <td class="text-end">{{ format_inr(totals.total_basic_salary) }}</td>
+            <td class="text-center">—</td>
+            <td class="text-end">{{ format_inr(totals.total_overtime_pay) }}</td>
+            <td class="text-end text-success">{{ format_inr(totals.total_final_salary) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+        <p>No salary data found{% if dept_filter %} for {{ dept_filter }}{% endif %}.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
